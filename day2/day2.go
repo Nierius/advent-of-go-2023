@@ -23,30 +23,64 @@ func main() {
 	for scanner.Scan() {
 		line := scanner.Text()
 		game := lineIntoGame(line)
-        games = append(games, game)
+		games = append(games, game)
 	}
 
-    total := 0
-    for _, game := range games {
-        gameminblues := 0
-        gameminreds := 0
-        gamemingreens := 0
-        for _, round := range game.rounds {
-            if round.blues > gameminblues {
-                gameminblues = round.blues
-            }
-            if round.greens > gamemingreens {
-                gamemingreens = round.greens
-            }
-            if round.reds  > gameminreds {
-                gameminreds = round.reds
-            }
-        }
+    part1(games)
+    part2(games)
+}
 
-        total += gameminblues * gameminreds * gamemingreens
-    }
+func part1(games []Game) {
+	total := 0
+	for _, game := range games {
+		gameok := true
+		for _, round := range game.rounds {
+			if round.blues > 14 {
+				gameok = false
+				break
+			}
+			if round.greens > 13 {
+				gameok = false
+				break
+			}
+			if round.reds > 12 {
+				gameok = false
+				break
+			}
+		}
 
-    fmt.Println(total)
+		if !gameok {
+			continue
+		}
+
+		total += game.id
+	}
+
+	fmt.Println("Part 1: ", total)
+}
+
+func part2(games []Game) {
+	total := 0
+	for _, game := range games {
+		gameminblues := 0
+		gameminreds := 0
+		gamemingreens := 0
+		for _, round := range game.rounds {
+			if round.blues > gameminblues {
+				gameminblues = round.blues
+			}
+			if round.greens > gamemingreens {
+				gamemingreens = round.greens
+			}
+			if round.reds > gameminreds {
+				gameminreds = round.reds
+			}
+		}
+
+		total += gameminblues * gameminreds * gamemingreens
+	}
+
+	fmt.Println("Part 2: ", total)
 }
 
 type Round struct {
@@ -71,7 +105,6 @@ func lineIntoGame(line string) Game {
 	greenre := regexp.MustCompile(`(\d+) green`)
 
 	for _, split := range splits {
-		fmt.Println("Row", split)
 		round := Round{}
 		idmatches := idre.FindStringSubmatch(split)
 		if len(idmatches) > 0 {
