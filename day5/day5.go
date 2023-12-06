@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"os"
 	"sort"
 	"strconv"
 	"strings"
+    "ourmodule/pkg/utils"
 )
 
 func main() {
-	contents := readEntireFileToString("example_input")
+	contents := utils.ReadEntireFileToString("example_input")
 	conversionMaps := strings.Split(contents, "\n\n")
 
 	seedsP1 := parseSeedsPart1(conversionMaps[0])
@@ -134,15 +134,6 @@ func parseRange(line string) MapRange {
 	}
 
 	return MapRange{sourceStart: convertedVals[1], targetStart: convertedVals[0], mRange: convertedVals[2]}
-}
-
-func readEntireFileToString(fileName string) string {
-	file, err := os.ReadFile(fileName)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return string(file)
 }
 
 type Seed struct {
