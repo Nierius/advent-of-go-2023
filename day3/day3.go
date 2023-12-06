@@ -5,12 +5,29 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"ourmodule/pkg/utils"
 	"regexp"
 	"strconv"
 )
 
+type PartNumber struct {
+	number   int
+	location Location
+}
+
+type Mark struct {
+	location Location
+	symbol   byte
+}
+
+type Location struct {
+	row         int
+	startcolumn int
+	endcolumn   int
+}
+
 func main() {
-	file, err := os.Open("./input.txt")
+	file, err := os.Open("example_input")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -29,23 +46,19 @@ func main() {
 		rowindex++
 	}
 
+	part1(marks, partnumbers)
+	part2(marks, partnumbers)
+}
+
+func part1(marks []Mark, partnumbers []PartNumber) {
 	total := 0
 	for _, num := range partnumbers {
 		numok := false
 		for _, mark := range marks {
-			rowdiff := abs(num.location.row - mark.location.row)
-			if rowdiff > 1 {
-				continue
-			}
-
-			if num.location.startcolumn-1 <= mark.location.startcolumn && num.location.endcolumn+1 >= mark.location.startcolumn {
-                fmt.Println(num.location.row, num.location.startcolumn, num.location.endcolumn)
-                fmt.Println(mark.location.row, mark.location.startcolumn, mark.location.endcolumn)
-                fmt.Println(num.number)
-                fmt.Println()
-				numok = true
-				break
-			}
+            if numberAndMarkTouch(num, mark) {
+                numok = true
+                break
+            }
 		}
 
 		if numok {
@@ -53,7 +66,38 @@ func main() {
 		}
 	}
 
-	fmt.Println(total)
+	fmt.Println("Part 1: ", total)
+}
+
+func part2(marks []Mark, partnumbers []PartNumber) {
+	total := 0
+	for _, gear := range utils.Filter(marks, func(mark Mark) bool {
+		return mark.symbol == '*'
+	}) {
+		numbersnexttogear := []int{}
+		for _, num := range partnumbers {
+			if numberAndMarkTouch(num, gear) {
+				numbersnexttogear = append(numbersnexttogear, num.number)
+			}
+		}
+
+		if len(numbersnexttogear) != 2 {
+			continue
+		}
+
+		total += numbersnexttogear[0] * numbersnexttogear[1]
+	}
+
+	fmt.Println("Part 2: ", total)
+}
+
+func numberAndMarkTouch(num PartNumber, mark Mark) bool {
+	rowdiff := abs(num.location.row - mark.location.row)
+	if rowdiff > 1 {
+		return false
+	}
+
+	return num.location.startcolumn-1 <= mark.location.startcolumn && num.location.endcolumn+1 >= mark.location.startcolumn
 }
 
 func exportPartNumsAndMarksFromRow(row string, rowindex int) ([]PartNumber, []Mark) {
@@ -73,7 +117,8 @@ func exportPartNumsAndMarksFromRow(row string, rowindex int) ([]PartNumber, []Ma
 	markmatches := markre.FindAllStringSubmatchIndex(row, -1)
 	for _, markmatch := range markmatches {
 		markindex := markmatch[0]
-		marks = append(marks, Mark{location: Location{row: rowindex, startcolumn: markindex}})
+		symbol := row[markindex]
+		marks = append(marks, Mark{location: Location{row: rowindex, startcolumn: markindex}, symbol: symbol})
 	}
 
 	return partnumbers, marks
@@ -84,19 +129,4 @@ func abs(number int) int {
 		return -number
 	}
 	return number
-}
-
-type PartNumber struct {
-	number   int
-	location Location
-}
-
-type Mark struct {
-	location Location
-}
-
-type Location struct {
-	row         int
-	startcolumn int
-	endcolumn   int
 }
