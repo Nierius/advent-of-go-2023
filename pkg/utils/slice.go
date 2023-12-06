@@ -1,7 +1,6 @@
 package utils
 
-type filterOperation func (any) bool
-func filter[T any](slice []T, op filterOperation) []T {
+func Filter[T any](slice []T, op func (T) bool) []T {
     newSlice := []T{}
     for _, val := range slice {
         if op(val) {
