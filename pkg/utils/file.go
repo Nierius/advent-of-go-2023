@@ -13,4 +13,3 @@ func ReadEntireFileToString(fileName string) string {
 
 	return string(file)
 }
-

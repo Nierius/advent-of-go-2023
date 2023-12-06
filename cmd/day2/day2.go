@@ -10,6 +10,17 @@ import (
 	"strings"
 )
 
+type Round struct {
+	blues  int
+	greens int
+	reds   int
+}
+
+type Game struct {
+	id     int
+	rounds []Round
+}
+
 func main() {
 	file, err := os.Open("./input.txt")
 	if err != nil {
@@ -26,30 +37,30 @@ func main() {
 		games = append(games, game)
 	}
 
-    part1(games)
-    part2(games)
+	part1(games)
+	part2(games)
 }
 
 func part1(games []Game) {
 	total := 0
 	for _, game := range games {
-		gameok := true
+		gameOk := true
 		for _, round := range game.rounds {
 			if round.blues > 14 {
-				gameok = false
+				gameOk = false
 				break
 			}
 			if round.greens > 13 {
-				gameok = false
+				gameOk = false
 				break
 			}
 			if round.reds > 12 {
-				gameok = false
+				gameOk = false
 				break
 			}
 		}
 
-		if !gameok {
+		if !gameOk {
 			continue
 		}
 
@@ -62,36 +73,25 @@ func part1(games []Game) {
 func part2(games []Game) {
 	total := 0
 	for _, game := range games {
-		gameminblues := 0
-		gameminreds := 0
-		gamemingreens := 0
+		gameMinBlues := 0
+		gameMinReds := 0
+		gameMinGreens := 0
 		for _, round := range game.rounds {
-			if round.blues > gameminblues {
-				gameminblues = round.blues
+			if round.blues > gameMinBlues {
+				gameMinBlues = round.blues
 			}
-			if round.greens > gamemingreens {
-				gamemingreens = round.greens
+			if round.greens > gameMinGreens {
+				gameMinGreens = round.greens
 			}
-			if round.reds > gameminreds {
-				gameminreds = round.reds
+			if round.reds > gameMinReds {
+				gameMinReds = round.reds
 			}
 		}
 
-		total += gameminblues * gameminreds * gamemingreens
+		total += gameMinBlues * gameMinReds * gameMinGreens
 	}
 
 	fmt.Println("Part 2: ", total)
-}
-
-type Round struct {
-	blues  int
-	greens int
-	reds   int
-}
-
-type Game struct {
-	id     int
-	rounds []Round
 }
 
 func lineIntoGame(line string) Game {
@@ -99,31 +99,31 @@ func lineIntoGame(line string) Game {
 
 	splits := strings.Split(line, ";")
 
-	idre := regexp.MustCompile(`Game (\d+)`)
-	redre := regexp.MustCompile(`(\d+) red`)
-	bluere := regexp.MustCompile(`(\d+) blue`)
-	greenre := regexp.MustCompile(`(\d+) green`)
+	idRe := regexp.MustCompile(`Game (\d+)`)
+	redRe := regexp.MustCompile(`(\d+) red`)
+	blueRe := regexp.MustCompile(`(\d+) blue`)
+	greenRe := regexp.MustCompile(`(\d+) green`)
 
 	for _, split := range splits {
 		round := Round{}
-		idmatches := idre.FindStringSubmatch(split)
-		if len(idmatches) > 0 {
-			game.id, _ = strconv.Atoi(idmatches[len(idmatches)-1])
+		idMatches := idRe.FindStringSubmatch(split)
+		if len(idMatches) > 0 {
+			game.id, _ = strconv.Atoi(idMatches[len(idMatches)-1])
 		}
 
-		redmatches := redre.FindStringSubmatch(split)
-		if len(redmatches) > 0 {
-			round.reds, _ = strconv.Atoi(redmatches[len(redmatches)-1])
+		redMatches := redRe.FindStringSubmatch(split)
+		if len(redMatches) > 0 {
+			round.reds, _ = strconv.Atoi(redMatches[len(redMatches)-1])
 		}
 
-		bluematches := bluere.FindStringSubmatch(split)
-		if len(bluematches) > 0 {
-			round.blues, _ = strconv.Atoi(bluematches[len(bluematches)-1])
+		blueMatches := blueRe.FindStringSubmatch(split)
+		if len(blueMatches) > 0 {
+			round.blues, _ = strconv.Atoi(blueMatches[len(blueMatches)-1])
 		}
 
-		greenmatches := greenre.FindStringSubmatch(split)
-		if len(greenmatches) > 0 {
-			round.greens, _ = strconv.Atoi(greenmatches[len(greenmatches)-1])
+		greenMatches := greenRe.FindStringSubmatch(split)
+		if len(greenMatches) > 0 {
+			round.greens, _ = strconv.Atoi(greenMatches[len(greenMatches)-1])
 		}
 
 		game.rounds = append(game.rounds, round)

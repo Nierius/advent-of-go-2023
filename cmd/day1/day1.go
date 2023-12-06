@@ -34,8 +34,8 @@ func main() {
 	sumPartOne := 0
 	sumPartTwo := 0
 	for i := range intsPartOne {
-        sumPartOne += intsPartOne[i]
-        sumPartTwo += intsPartTwo[i]
+		sumPartOne += intsPartOne[i]
+		sumPartTwo += intsPartTwo[i]
 	}
 
 	fmt.Println("Sum part1 is ", sumPartOne)
@@ -46,9 +46,9 @@ func exportNums(input string) int {
 	re := regexp.MustCompile("[0-9]")
 	nums := re.FindAllString(input, -1)
 
-	numstr := fmt.Sprintf("%s%s", nums[0], nums[len(nums)-1])
+	numStr := fmt.Sprintf("%s%s", nums[0], nums[len(nums)-1])
 
-	val, err := strconv.Atoi(numstr)
+	val, err := strconv.Atoi(numStr)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -8,13 +8,18 @@ import (
 	"strings"
 )
 
+type Race struct {
+	time   int
+	record int
+}
+
 func main() {
 	contentsSplitted := strings.Split(utils.ReadEntireFileToString("input.txt"), "\n")
 	racesPart1 := parseRacesPart1(contentsSplitted)
 	racePart2 := parseRacePart2(contentsSplitted)
 
 	part1(racesPart1)
-    part2(racePart2)
+	part2(racePart2)
 }
 
 func part1(races []Race) {
@@ -32,7 +37,7 @@ func part1(races []Race) {
 }
 
 func part2(race Race) {
-    fmt.Println("Part 2: ", len(exportRecordChargeTimesForRace(race)))
+	fmt.Println("Part 2: ", len(exportRecordChargeTimesForRace(race)))
 }
 
 func parseRacesPart1(input []string) []Race {
@@ -84,9 +89,4 @@ func exportRecordChargeTimesForRace(race Race) []int {
 	}
 
 	return winningChargeTimes
-}
-
-type Race struct {
-	time   int
-	record int
 }

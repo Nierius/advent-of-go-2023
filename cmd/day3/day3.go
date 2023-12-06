@@ -22,8 +22,8 @@ type Mark struct {
 
 type Location struct {
 	row         int
-	startcolumn int
-	endcolumn   int
+	startColumn int
+	endColumn   int
 }
 
 func main() {
@@ -36,32 +36,32 @@ func main() {
 	scanner := bufio.NewScanner(file)
 
 	marks := []Mark{}
-	partnumbers := []PartNumber{}
-	rowindex := 0
+	partNumbers := []PartNumber{}
+	rowIndex := 0
 	for scanner.Scan() {
 		line := scanner.Text()
-		tparts, tmarks := exportPartNumsAndMarksFromRow(line, rowindex)
+		tparts, tmarks := exportPartNumsAndMarksFromRow(line, rowIndex)
 		marks = append(marks, tmarks...)
-		partnumbers = append(partnumbers, tparts...)
-		rowindex++
+		partNumbers = append(partNumbers, tparts...)
+		rowIndex++
 	}
 
-	part1(marks, partnumbers)
-	part2(marks, partnumbers)
+	part1(marks, partNumbers)
+	part2(marks, partNumbers)
 }
 
-func part1(marks []Mark, partnumbers []PartNumber) {
+func part1(marks []Mark, partNumbers []PartNumber) {
 	total := 0
-	for _, num := range partnumbers {
-		numok := false
+	for _, num := range partNumbers {
+		numOk := false
 		for _, mark := range marks {
-            if numberAndMarkTouch(num, mark) {
-                numok = true
-                break
-            }
+			if numberAndMarkTouch(num, mark) {
+				numOk = true
+				break
+			}
 		}
 
-		if numok {
+		if numOk {
 			total += num.number
 		}
 	}
@@ -69,59 +69,59 @@ func part1(marks []Mark, partnumbers []PartNumber) {
 	fmt.Println("Part 1: ", total)
 }
 
-func part2(marks []Mark, partnumbers []PartNumber) {
+func part2(marks []Mark, partNumbers []PartNumber) {
 	total := 0
 	for _, gear := range utils.Filter(marks, func(mark Mark) bool {
 		return mark.symbol == '*'
 	}) {
-		numbersnexttogear := []int{}
-		for _, num := range partnumbers {
+		numbersNextToGear := []int{}
+		for _, num := range partNumbers {
 			if numberAndMarkTouch(num, gear) {
-				numbersnexttogear = append(numbersnexttogear, num.number)
+				numbersNextToGear = append(numbersNextToGear, num.number)
 			}
 		}
 
-		if len(numbersnexttogear) != 2 {
+		if len(numbersNextToGear) != 2 {
 			continue
 		}
 
-		total += numbersnexttogear[0] * numbersnexttogear[1]
+		total += numbersNextToGear[0] * numbersNextToGear[1]
 	}
 
 	fmt.Println("Part 2: ", total)
 }
 
 func numberAndMarkTouch(num PartNumber, mark Mark) bool {
-	rowdiff := abs(num.location.row - mark.location.row)
-	if rowdiff > 1 {
+	rowDiff := abs(num.location.row - mark.location.row)
+	if rowDiff > 1 {
 		return false
 	}
 
-	return num.location.startcolumn-1 <= mark.location.startcolumn && num.location.endcolumn+1 >= mark.location.startcolumn
+	return num.location.startColumn-1 <= mark.location.startColumn && num.location.endColumn+1 >= mark.location.startColumn
 }
 
-func exportPartNumsAndMarksFromRow(row string, rowindex int) ([]PartNumber, []Mark) {
-	partnumbers := []PartNumber{}
-	numre := regexp.MustCompile(`\b\d+\b`)
-	nummatches := numre.FindAllStringSubmatchIndex(row, -1)
-	for _, nummatch := range nummatches {
-		numstartindex := nummatch[0]
-		numendindex := nummatch[1]
+func exportPartNumsAndMarksFromRow(row string, rowIndex int) ([]PartNumber, []Mark) {
+	partNumbers := []PartNumber{}
+	numRe := regexp.MustCompile(`\b\d+\b`)
+	numMatches := numRe.FindAllStringSubmatchIndex(row, -1)
+	for _, numMatch := range numMatches {
+		numStartIndex := numMatch[0]
+		numEndIndex := numMatch[1]
 
-		value, _ := strconv.Atoi(row[numstartindex:numendindex])
-		partnumbers = append(partnumbers, PartNumber{number: value, location: Location{row: rowindex, startcolumn: numstartindex, endcolumn: numendindex - 1}})
+		value, _ := strconv.Atoi(row[numStartIndex:numEndIndex])
+		partNumbers = append(partNumbers, PartNumber{number: value, location: Location{row: rowIndex, startColumn: numStartIndex, endColumn: numEndIndex - 1}})
 	}
 
 	marks := []Mark{}
-	markre := regexp.MustCompile(`[^0-9.]`)
-	markmatches := markre.FindAllStringSubmatchIndex(row, -1)
-	for _, markmatch := range markmatches {
-		markindex := markmatch[0]
-		symbol := row[markindex]
-		marks = append(marks, Mark{location: Location{row: rowindex, startcolumn: markindex}, symbol: symbol})
+	markRe := regexp.MustCompile(`[^0-9.]`)
+	markMatches := markRe.FindAllStringSubmatchIndex(row, -1)
+	for _, markmatch := range markMatches {
+		markIndex := markmatch[0]
+		symbol := row[markIndex]
+		marks = append(marks, Mark{location: Location{row: rowIndex, startColumn: markIndex}, symbol: symbol})
 	}
 
-	return partnumbers, marks
+	return partNumbers, marks
 }
 
 func abs(number int) int {

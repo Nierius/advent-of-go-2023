@@ -4,11 +4,51 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"ourmodule/pkg/utils"
 	"sort"
 	"strconv"
 	"strings"
-    "ourmodule/pkg/utils"
 )
+
+type Seed struct {
+	id int
+}
+
+type SeedRange struct {
+	rangeStart int
+	rangeStop  int
+}
+
+type MapRange struct {
+	sourceStart int
+	targetStart int
+	mRange      int
+}
+
+type Map struct {
+	ranges []MapRange
+}
+
+func (self Map) sourceToTarget(source int) int {
+	for _, rrange := range self.ranges {
+		if rrange.includes(source) {
+			return rrange.sourceToTarget(source)
+		}
+	}
+
+	return source
+}
+
+func (self MapRange) includes(source int) bool {
+	diff := source - self.sourceStart
+	return diff >= 0 && diff < self.mRange
+}
+
+func (self MapRange) sourceToTarget(source int) int {
+	diff := source - self.sourceStart
+	return self.targetStart + diff
+}
+
 
 func main() {
 	contents := utils.ReadEntireFileToString("example_input")
@@ -134,43 +174,4 @@ func parseRange(line string) MapRange {
 	}
 
 	return MapRange{sourceStart: convertedVals[1], targetStart: convertedVals[0], mRange: convertedVals[2]}
-}
-
-type Seed struct {
-	id int
-}
-
-type SeedRange struct {
-	rangeStart int
-	rangeStop  int
-}
-
-type MapRange struct {
-	sourceStart int
-	targetStart int
-	mRange      int
-}
-
-type Map struct {
-	ranges []MapRange
-}
-
-func (self Map) sourceToTarget(source int) int {
-	for _, rrange := range self.ranges {
-		if rrange.includes(source) {
-			return rrange.sourceToTarget(source)
-		}
-	}
-
-	return source
-}
-
-func (self MapRange) includes(source int) bool {
-	diff := source - self.sourceStart
-	return diff >= 0 && diff < self.mRange
-}
-
-func (self MapRange) sourceToTarget(source int) int {
-	diff := source - self.sourceStart
-	return self.targetStart + diff
 }
