@@ -30,3 +30,22 @@ func Some[T any](slice []T, op func (T) bool) bool {
 
     return false
 }
+
+func Includes[T comparable](slice []T, val T) bool {
+    for _, itVal := range slice {
+        if itVal == val {
+            return true
+        }
+    }
+
+    return false
+}
+
+func Map[T any, V any](slice []T, op func (T) V) []V {
+    newSlice := []V{}
+    for _, val := range slice {
+        newSlice = append(newSlice, op(val))
+    }
+
+    return newSlice
+}
