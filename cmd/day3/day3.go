@@ -92,7 +92,7 @@ func part2(marks []Mark, partNumbers []PartNumber) {
 }
 
 func numberAndMarkTouch(num PartNumber, mark Mark) bool {
-	rowDiff := abs(num.location.row - mark.location.row)
+	rowDiff := utils.Abs(num.location.row - mark.location.row)
 	if rowDiff > 1 {
 		return false
 	}
@@ -124,9 +124,3 @@ func exportPartNumsAndMarksFromRow(row string, rowIndex int) ([]PartNumber, []Ma
 	return partNumbers, marks
 }
 
-func abs(number int) int {
-	if number < 0 {
-		return -number
-	}
-	return number
-}
